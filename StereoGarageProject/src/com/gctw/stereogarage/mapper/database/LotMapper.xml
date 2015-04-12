@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.gctw.stereogarage.mapper.database.LotMapper">  
+  
+  	<!--
+  		DB Column:
+  			LotId,
+  			Storey,
+  			IsEmpty,
+  			IsContracted,
+  			currentUserId,
+  			StartTimestamp
+  	  -->
+    <select id="getAllLotEntities" resultType="LotEntity">  
+        select * from lot;
+    </select>  
+    
+    <select id="getLotEntitiesByStorey" parameterType="int" resultType="LotEntity">  
+        select * from lot where Storey = #{storey};
+    </select>
+    
+    <select id="getLotEntityByLotId" parameterType="int" resultType="LotEntity">  
+        select * from lot where LotId = #{lotId};
+    </select> 
+    
+    <insert id="addLotEntity" parameterType="LotEntity">
+    	insert into lot
+    	(Storey,
+    	 IsEmpty,
+    	 IsContracted,
+    	 CurrentUserId,
+    	 StartTimeStamp) 
+    	values 
+    	(#{storey},
+    	 #{isEmpty},
+    	 #{isContracted},
+    	 #{currentUserId},
+    	 #{startTimestamp});
+    </insert>
+    
+    <delete id="deleteLotEntity" parameterType="int">
+    </delete>
+      
+</mapper>  

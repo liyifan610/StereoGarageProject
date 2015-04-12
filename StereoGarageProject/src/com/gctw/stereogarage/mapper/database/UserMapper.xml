@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	DB Columns:
+		UserId
+		DisplayName
+		IdentityId
+		PhoneNumber
+		Company
+		Gender
+		Birth
+  -->
+<mapper namespace="com.gctw.stereogarage.mapper.database.UserMapper">  
+  
+    <select id="queryAllUserEntities" resultType="UserEntity">  
+        select * from user;
+    </select>
+    
+    <select id="queryUserEntityByUserId" parameterType="int" resultType="UserEntity">  
+        select * from user where UserId = #{userId};
+    </select>
+    
+    <insert id="insertUser" parameterType="UserEntity" useGeneratedKeys="true" keyProperty="userId">
+    	insert into user 
+    	(DisplayName, 
+    	 IdentityId, 
+    	 PhoneNumber, 
+    	 Company, 
+    	 Gender) 
+    	 values 
+    	 (#{displayName},
+    	  #{identityId},
+    	  #{phoneNumber},
+    	  #{company},
+    	  #{gender});
+    </insert>
+      
+</mapper>  
