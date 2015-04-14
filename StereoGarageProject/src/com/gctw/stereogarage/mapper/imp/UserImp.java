@@ -34,9 +34,9 @@ public class UserImp implements UserMapper{
 	}
 	
 	@Override
-	public List<UserEntity> queryAllUserEntities() {
+	public List<UserEntity> selectAllUserEntities() {
 		// TODO Auto-generated method stub
-		return mUserMapper.queryAllUserEntities();
+		return mUserMapper.selectAllUserEntities();
 	}
 
 	@Override
@@ -46,11 +46,24 @@ public class UserImp implements UserMapper{
 	}
 
 	@Override
-	public int insertUser(UserEntity userInfo) {
+	public int insertUserEntity(UserEntity userInfo) {
 		// TODO Auto-generated method stub
-		int result = mUserMapper.insertUser(userInfo);
+		int result = mUserMapper.insertUserEntity(userInfo);
 		mSession.commit();
 		return result;
 	}
 
+	@Override
+	public int updateUserEntity(UserEntity user) {
+		// TODO Auto-generated method stub
+		int result = mUserMapper.updateUserEntity(user);
+		mSession.commit();
+		return result;
+	}
+
+	@Override
+	public UserEntity queryUserEntityByIdentityId(String identityId) {
+		// TODO Auto-generated method stub
+		return mUserMapper.queryUserEntityByIdentityId(identityId);
+	}
 }

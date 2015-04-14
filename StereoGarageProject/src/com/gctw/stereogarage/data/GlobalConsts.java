@@ -5,14 +5,22 @@ public class GlobalConsts {
 	public static final String MYBATIS_CONFIG = "config.xml";
 	
 	/**
-	 * http response contentType
+	 * default data for database fields
 	 */
-	public static final String CONTENT_TYPE_TEXT = "text/plain;charset=utf-8";
-	public static final String CONTENT_TYPE_HTML = "text/html;charset=utf-8";
+	public static int SQL_DEFAULT_INT = -1;
+	public static String SQL_DEAULT_STRING = "";
+	public static double SQL_DEFAULT_DOUBLE = -1.0;
 	
 	/**
-	 * response json status code 
+	 * gender
 	 */
-	public static final int SUCCESS_STATUS = 0;
-	public static final int FAILED_STATUS = 1;
+	public static int MALE = 1;
+	public static int FEMALE = 0;
+	
+	/**
+	 * http response contentType
+	 */
+	public static final String CONTENT_TYPE_TEXT = "text/plain;charset=UTF-8";
+	public static final String CONTENT_TYPE_HTML = "text/html;charset=UTF-8";
+	public static final String CONTENT_TYPE_JSON = "application/json;charset=UTF-8";
 }

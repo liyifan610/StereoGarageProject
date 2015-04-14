@@ -4,34 +4,26 @@ import java.util.List;
 
 import com.gctw.stereogarage.entity.UserEntity;
 import com.gctw.stereogarage.mapper.imp.UserImp;
-import com.gtcw.stereogarage.responser.DataManagerResponse;
+import com.gctw.stereogarage.responser.DataManagerResponse;
 
 public class UserDbHelper extends DatabaseHelper {
 	
-	private static UserImp mUserImp;
+	private UserImp mUserImp;
 	
-	static{
+	public UserDbHelper(){
 		mUserImp = new UserImp();
 	}
 	
-	public void queryAllUserFromDb(DataManagerResponse response, SqlProcessInfo processInfo){
-		List<UserEntity> userList = mUserImp.queryAllUserEntities();
-		SqlResponseInfo responseInfo = new SqlResponseInfo();
-		responseInfo.taskId = processInfo.taskId;
-		responseInfo.responseProtocol = processInfo.processProtocol;
-		responseInfo.responseObject = userList;
-		response.onSuccess(responseInfo);
+	public void selectAllUserFromDb(DataManagerResponse response, SqlProcessInfo processInfo){
+		List<UserEntity> userList = mUserImp.selectAllUserEntities();
+		replyMsgToDataManager(response, processInfo, userList);
 	}
 	
 	public void insertUserIntoDb(DataManagerResponse response, SqlProcessInfo processInfo){
 		UserEntity userInfo = (UserEntity)processInfo.sqlObject;
-		int result = mUserImp.insertUser(userInfo);
+		int result = mUserImp.insertUserEntity(userInfo);
 		if(result == 1){
-			SqlResponseInfo responseInfo = new SqlResponseInfo();
-			responseInfo.taskId = processInfo.taskId;
-			responseInfo.responseProtocol = processInfo.processProtocol;
-			responseInfo.responseObject = userInfo;
-			response.onSuccess(responseInfo);
+			replyMsgToDataManager(response, processInfo, userInfo);
 		}
 	}
 }

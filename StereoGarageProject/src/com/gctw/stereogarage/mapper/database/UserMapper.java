@@ -5,9 +5,13 @@ import java.util.List;
 import com.gctw.stereogarage.entity.UserEntity;
 
 public interface UserMapper {
-	public List<UserEntity> queryAllUserEntities();
+	public List<UserEntity> selectAllUserEntities();
 	
 	public UserEntity queryUserEntityByUserId(int userId);
 	
-	public int insertUser(UserEntity user);
+	public UserEntity queryUserEntityByIdentityId(String identityId);
+	
+	public int insertUserEntity(UserEntity user);
+	
+	public int updateUserEntity(UserEntity user);
 }

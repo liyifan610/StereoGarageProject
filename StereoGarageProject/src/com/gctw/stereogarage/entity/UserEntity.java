@@ -15,7 +15,7 @@ public class UserEntity implements Serializable {
 	private String identityId;
 	private String phoneNumber;
 	private String company;
-	private int gender;
+	private int gender = -1;
 	private Date birth;
 
 	public int getUserId() {

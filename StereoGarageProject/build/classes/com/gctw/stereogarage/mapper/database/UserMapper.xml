@@ -2,39 +2,78 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!--
-	DB Columns:
-		UserId
-		DisplayName
-		IdentityId
-		PhoneNumber
-		Company
-		Gender
-		Birth
-  -->
 <mapper namespace="com.gctw.stereogarage.mapper.database.UserMapper">  
-  
-    <select id="queryAllUserEntities" resultType="UserEntity">  
-        select * from user;
+	<!--
+		DB Columns:
+			UserId
+			DisplayName
+			IdentityId
+			PhoneNumber
+			Company
+			Gender
+			Birth
+  	-->
+  	<resultMap type="UserEntity" id="UserEntityRs">
+  		<id column="UserId" property="userId"/>
+  		<result column="DisplayName" property="displayName"/>
+  		<result column="IdentityId" property="identityId"/>
+  		<result column="phoneNumber" property="phoneNumber"/>
+  		<result column="Company" property="company"/>
+  		<result column="Gender" property="gender"/>
+  		<result column="Birth" property="birth"/>
+  	</resultMap>
+  	
+  	<sql id="selectListUser">
+  		select * from user
+  	</sql>
+  	
+    <select id="selectAllUserEntities" resultType="UserEntity">  
+    	<include refid="selectListUser"/>;
     </select>
     
     <select id="queryUserEntityByUserId" parameterType="int" resultType="UserEntity">  
-        select * from user where UserId = #{userId};
+        <include refid="selectListUser"/> where UserId = #{userId};
     </select>
     
-    <insert id="insertUser" parameterType="UserEntity" useGeneratedKeys="true" keyProperty="userId">
+    <select id="queryUserEntityByIdentityId" parameterType="String" resultMap="UserEntityRs">
+    	<include refid="selectListUser"/> where IdentityId = #{identityId};
+    </select>
+    
+    <insert id="insertUserEntity" parameterType="UserEntity" useGeneratedKeys="true" keyProperty="userId">
     	insert into user 
-    	(DisplayName, 
-    	 IdentityId, 
-    	 PhoneNumber, 
-    	 Company, 
-    	 Gender) 
-    	 values 
-    	 (#{displayName},
-    	  #{identityId},
-    	  #{phoneNumber},
-    	  #{company},
-    	  #{gender});
+    	(
+    	 <trim prefix="" suffixOverrides=",">
+    	 	<if test="displayName != null">DisplayName,</if>
+    	 	<if test="identityId != null">IdentityId,</if>
+    	 	<if test="phoneNumber != null">PhoneNumber,</if>
+    	 	<if test="company != null"> Company,</if>
+    	 	<if test="gender != -1"> Gender</if>
+    	 	<if test="birth != null"> Birth</if>
+    	 </trim>
+    	 ) 
+    	 values (
+    	 <trim prefix="" suffixOverrides=",">
+    	 	<if test="displayName != null">#{displayName},</if>
+    	 	<if test="identityId != null">#{identityId},</if>
+    	 	<if test="phoneNumber != null">#{phoneNumber},</if>
+    	 	<if test="company != null"> #{company},</if>
+    	 	<if test="gender != -1"> #{gender},</if>
+    	 	<if test="birth != null"> #{birth}</if>
+    	 </trim>
+    	 );
     </insert>
+    
+    <update id="updateUserEntity" parameterType="UserEntity">
+    	update user
+          <set>
+    	    <if test="displayName != null">DisplayName = #{displayName},</if>		
+    	    <if test="identityId != null">IdentityId = #{identityId},</if>
+    	    <if test="phoneNumber != null">PhoneNumber = #{phoneNumber},</if>	
+    	    <if test="company != null">Company = #{company},</if>
+    	    <if test="gender != -1">Gender = #{gender},</if>
+    	    <if test="birth != null">Birth = #{birth}</if>
+    	  </set>
+    	  where IdentityId=#{identityId}
+    </update>
       
 </mapper>  

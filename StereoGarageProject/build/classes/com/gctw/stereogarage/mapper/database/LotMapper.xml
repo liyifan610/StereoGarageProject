@@ -2,45 +2,114 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
-<mapper namespace="com.gctw.stereogarage.mapper.database.LotMapper">  
-  
+<mapper namespace="com.gctw.stereogarage.mapper.database.LotMapper">
   	<!--
   		DB Column:
   			LotId,
   			Storey,
-  			IsEmpty,
+  			Status,
   			IsContracted,
-  			currentUserId,
-  			StartTimestamp
+  			CurrentUserId,
+  			ParkingStartTime
   	  -->
-    <select id="getAllLotEntities" resultType="LotEntity">  
-        select * from lot;
+  	<resultMap type="LotEntity" id="LotEntityRs">
+  		<id column="LotId" property="lotId"/>
+  		<result column="Storey" property="storey"/>
+  		<result column="Status" property="status"/>
+  		<result column="LastOperationType" property="lastOperationType"/>
+  		<result column="IsContracted" property="isContracted"/>
+  		<result column="ParkingStartTime" property="parkingStartTime"/>
+  		<result column="CurrentUserId" property="currentUserId"/>
+  		<association property="userInfo" javaType="UserEntity" resultMap="UserEntityRs"/>
+  	</resultMap>
+  	
+  	<resultMap type="UserEntity" id="UserEntityRs">
+  		<id column="UserId" property="userId"/>
+  		<result column="DisplayName" property="displayName"/>
+  		<result column="IdentityId" property="identityId"/>
+  		<result column="phoneNumber" property="phoneNumber"/>
+  		<result column="Company" property="company"/>
+  		<result column="Gender" property="gender"/>
+  		<result column="Birth" property="birth"/>
+  	</resultMap>
+  	
+  	<sql id="selectListLot">
+  		select * from lot
+  	</sql>
+  	
+    <select id="selectAllLotEntities" resultType="LotEntity">  
+        <include refid="selectListLot"/>;
     </select>  
     
-    <select id="getLotEntitiesByStorey" parameterType="int" resultType="LotEntity">  
-        select * from lot where Storey = #{storey};
+    <select id="queryLotEntitiesByStorey" parameterType="int" resultMap="LotEntityRs">  
+		select
+		l.lotId LotId,
+		l.storey Storey,
+		l.status Status,
+		l.lastOperationType LastOperation,
+		l.isContracted IsContracted,
+		l.parkingStartTime ParkingStartTime,
+		l.currentUserId CurrentUserId,
+		u.userId UserId,
+		u.displayName DisplayName,
+		u.identityId IdentityId,
+		u.phoneNumber PhoneNumber,
+		u.company Company,
+		u.gender Gender,
+		u.birth Birth
+		from lot l
+		left outer join user u
+		on l.CurrentUserId = u.UserId
+        where Storey = #{storey};
     </select>
     
-    <select id="getLotEntityByLotId" parameterType="int" resultType="LotEntity">  
-        select * from lot where LotId = #{lotId};
+    <select id="queryLotEntityByLotId" parameterType="int" resultType="LotEntity">  
+        <include refid="selectListLot"/> where LotId = #{lotId};
     </select> 
     
-    <insert id="addLotEntity" parameterType="LotEntity">
+    <insert id="insertLotEntity" parameterType="LotEntity">
     	insert into lot
     	(Storey,
     	 IsEmpty,
+    	 Status,
+    	 LastOperationType,
     	 IsContracted,
     	 CurrentUserId,
     	 StartTimeStamp) 
     	values 
-    	(#{storey},
-    	 #{isEmpty},
-    	 #{isContracted},
-    	 #{currentUserId},
-    	 #{startTimestamp});
+    	<set>
+    	 	<if test="storey != -1">#{storey},</if>
+    	 	<if test="isEmpty != null">#{isEmpty},</if>
+    	 	<if test="status != -1">#{status},</if>
+    	 	<if test="lastOperationType != -1"> #{lastOperationType},</if>
+    	 	<if test="isContracted != -1"> #{isContracted},</if>
+    	 	<if test="currentUserId != -1"> #{currentUserId},</if>
+    	 	<if test="startTimeStamp != -1"> #{startTimeStamp}</if>
+    	 </set>);
+    </insert>
+    
+    <insert id="insertLotEntitiesBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="lotId">
+    	insert into lot(Storey)
+    	values
+    	<foreach collection="list" item="item" index="index" separator=",">
+    		(#{item.storey})
+    	</foreach>
     </insert>
     
     <delete id="deleteLotEntity" parameterType="int">
     </delete>
-      
+    
+    <update id="updateLotEntity" parameterType="LotEntity" >
+    	update lot
+          <set>
+    	    <if test="storey != -1">Storey = #{storey},</if>		
+    	    <if test="status != -1">Status = #{status},</if>
+    	    <if test="lastOperationType != -1">LastOperationType = #{lastOperationType},</if>	
+    	    <if test="isContracted != -1">IsContracted = #{isContracted},</if>
+    	    <if test="currentUserId != -1">CurrentUserId = #{currentUserId},</if>
+    	    <if test="parkingStartTime != -1">ParkingStartTime = #{parkingStartTime},</if>
+    	  </set>
+    	  where LotId=#{lotId}
+    </update>
+     
 </mapper>  

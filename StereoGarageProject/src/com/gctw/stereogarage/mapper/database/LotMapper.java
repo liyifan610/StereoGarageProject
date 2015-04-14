@@ -5,15 +5,22 @@ import java.util.List;
 import com.gctw.stereogarage.entity.LotEntity;
 
 public interface LotMapper {
-	public List<LotEntity> getAllLotEntities();
+	public List<LotEntity> selectAllLotEntities();
 	
-	public List<LotEntity> getLotEntitiesByStorey(int storey);
+	public List<LotEntity> queryLotEntitiesByStorey(int storey);
 	
-	public LotEntity getLotEntityByLotId(int lotId);
+	public LotEntity queryLotEntityByLotId(int lotId);
 	
-	public void addLotEntity(LotEntity lot);
+	public int insertLotEntity(LotEntity lot);
 	
-	public void deleteLotEntity(int lotId);
+	/**
+	 * batch insert
+	 * @param lots
+	 * @return the num of the rows that have inserted into the database
+	 */
+	public int insertLotEntitiesBatch(List<LotEntity> lots);
 	
-	public void updateLotEntity(LotEntity lot);
+	public int deleteLotEntity(int lotId);
+	
+	public int updateLotEntity(LotEntity lot);
 }

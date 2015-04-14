@@ -8,11 +8,25 @@ public class LotEntity implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private int lotId;
-	private int storey;
-	private boolean isEmpty;
-	private boolean isContracted;
-	private int currentUserId;
-	private double startTimestamp;
+	private int storey = -1;
+	private int status = -1;
+	private int lastOperationType = -1;
+	private int isContracted = -1;
+	private int currentUserId = -1;
+	private UserEntity userInfo;
+	private double parkingStartTime = -1;
+
+	public LotEntity(){
+		
+	}
+	
+	public UserEntity getUserInfo() {
+		return userInfo;
+	}
+
+	public void setUserInfo(UserEntity userInfo) {
+		this.userInfo = userInfo;
+	}
 
 	public int getLotId() {
 		return lotId;
@@ -30,20 +44,12 @@ public class LotEntity implements Serializable {
 		this.storey = storey;
 	}
 
-	public boolean isContracted() {
+	public int isContracted() {
 		return isContracted;
 	}
 
-	public void setContracted(boolean isContracted) {
+	public void setContracted(int isContracted) {
 		this.isContracted = isContracted;
-	}
-
-	public boolean isEmpty() {
-		return isEmpty;
-	}
-
-	public void setEmpty(boolean isEmpty) {
-		this.isEmpty = isEmpty;
 	}
 
 	public int getCurrentUserId() {
@@ -53,12 +59,28 @@ public class LotEntity implements Serializable {
 	public void setCurrentUserId(int currentUserId) {
 		this.currentUserId = currentUserId;
 	}
-
-	public double getStartTimestamp() {
-		return startTimestamp;
+	
+	public int getStatus() {
+		return status;
 	}
 
-	public void setStartTimestamp(double startTimestamp) {
-		this.startTimestamp = startTimestamp;
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public double getParkingStartTime() {
+		return parkingStartTime;
+	}
+
+	public void setParkingStartTime(double parkingStartTime) {
+		this.parkingStartTime = parkingStartTime;
+	}
+
+	public int getLastOperationType() {
+		return lastOperationType;
+	}
+
+	public void setLastOperationType(int lastOperationType) {
+		this.lastOperationType = lastOperationType;
 	}
 }
