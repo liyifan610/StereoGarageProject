@@ -6,5 +6,5 @@ public interface DataManagerResponse {
 
 	public void onSuccess(SqlResponseInfo info);
 	
-	public void onFalied(SqlResponseInfo info);
+	public void onFailed(SqlResponseInfo info);
 }

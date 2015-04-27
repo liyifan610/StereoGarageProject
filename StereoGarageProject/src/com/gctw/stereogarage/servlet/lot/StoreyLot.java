@@ -29,7 +29,7 @@ public class StoreyLot extends BaseServlet{
 			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		super.doPost(request, response);
-		String jsonString = GCTWUtil.getRequsetJsonString(request);
+		String jsonString = getRequsetJsonString(request);
 		int storey = -1;
 		try{
 			storey = GCTWUtil.parseStoreyRequest(jsonString);

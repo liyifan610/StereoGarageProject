@@ -49,7 +49,8 @@ public class LotImp implements LotMapper {
 	@Override
 	public LotEntity queryLotEntityByLotId(int lotId) {
 		// TODO Auto-generated method stub
-		return null;
+		LotEntity lotInfo = mLotMapper.queryLotEntityByLotId(lotId);
+		return lotInfo;
 	}
 
 	@Override

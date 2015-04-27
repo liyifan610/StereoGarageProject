@@ -13,8 +13,37 @@ public class LotEntity implements Serializable {
 	private int lastOperationType = -1;
 	private int isContracted = -1;
 	private int currentUserId = -1;
+	private int contractUserId = -1;
 	private UserEntity userInfo;
+	private double reservationTime = -1;
+	
+
+	public int getContractUserId() {
+		return contractUserId;
+	}
+
+	public void setContractUserId(int contractUserId) {
+		this.contractUserId = contractUserId;
+	}
+
+	public double getReservationTime() {
+		return reservationTime;
+	}
+
+	public void setReservationTime(double reservationTime) {
+		this.reservationTime = reservationTime;
+	}
+
+	public double getParkingEndTime() {
+		return parkingEndTime;
+	}
+
+	public void setParkingEndTime(double parkingEndTime) {
+		this.parkingEndTime = parkingEndTime;
+	}
+
 	private double parkingStartTime = -1;
+	private double parkingEndTime = -1;
 
 	public LotEntity(){
 		
@@ -44,11 +73,11 @@ public class LotEntity implements Serializable {
 		this.storey = storey;
 	}
 
-	public int isContracted() {
+	public int getIsContracted() {
 		return isContracted;
 	}
 
-	public void setContracted(int isContracted) {
+	public void setIsContracted(int isContracted) {
 		this.isContracted = isContracted;
 	}
 

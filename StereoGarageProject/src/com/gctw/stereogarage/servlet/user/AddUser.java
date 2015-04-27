@@ -31,13 +31,15 @@ public class AddUser extends BaseServlet{
 			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		super.doPost(request, response);
-		String userJsonString = GCTWUtil.getRequsetJsonString(request);
+		String userJsonString = getRequsetJsonString(request);
 		UserEntity userInfo = null;
 		try {
-			userInfo = GCTWUtil.parseSingleUserJson(userJsonString);
+			userInfo = GCTWUtil.parseUserRequest(userJsonString);
 		} catch (Exception e) {
 			response.setStatus(HttpStatusCode.BAD_REQUEST);
 		}
-		UserDataManager.getInstanse().addUser(mServletResponse, userInfo);
+		if(userInfo != null){
+			UserDataManager.getInstanse().addUser(mServletResponse, userInfo);
+		}
 	}
 }

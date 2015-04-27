@@ -15,6 +15,7 @@ import com.gctw.stereogarage.entity.OperationEntity;
 import com.gctw.stereogarage.entity.UserEntity;
 import com.gctw.stereogarage.manager.LotDataManager;
 import com.gctw.stereogarage.manager.OperationDataManager;
+import com.gctw.stereogarage.manager.UserDataManager;
 import com.gctw.stereogarage.mapper.imp.LotImp;
 import com.gctw.stereogarage.mapper.imp.OperationImp;
 import com.gctw.stereogarage.mapper.imp.UserImp;
@@ -55,6 +56,9 @@ public class DataBaseTest {
 //		userImp.insertUserEntity(user);
 //		user = userImp.queryUserEntityByIdentityId(user.getIdentityId());
 //		System.out.println(user.getUserId());
+//		UserEntity userInfo = new UserEntity();
+//		userInfo.setUserId(-1);
+//		UserDataManager.getInstanse().getOneUser(mResponse, userInfo);
 	}
 	
 	@Test
@@ -69,7 +73,7 @@ public class DataBaseTest {
 //			}
 //		}
 //		
-//		LotImp lotImp = new LotImp();
+		LotImp lotImp = new LotImp();
 //		System.out.println(lotImp.insertLotEntitiesBatch(lotList));
 //		LotEntity lot = new LotEntity();
 //		lot.setLotId(2);
@@ -77,23 +81,26 @@ public class DataBaseTest {
 //		lot.setCurrentUserId(4);
 //		System.out.println(lotImp.updateLotEntity(lot));
 //		LotDataManager.getInstance().getAllLot(mResponse);
+		
+//		LotDataManager.getInstance().getStoreyLot(mResponse, 1);
+		
+//		LotEntity lotInfo = lotImp.queryLotEntityByLotId(1);
+//		System.out.println(lotInfo.getUserInfo().getDisplayName());
 	}
 	
 	@Test
 	public void testOperationDataManager(){
 		OperationEntity operation = new OperationEntity();
+		operation.setOperationType(OperationType.Leave.ordinal());
 		LotEntity lotInfo = new LotEntity();
 		UserEntity userInfo = new UserEntity();
-		lotInfo.setLotId(1);
-		lotInfo.setLastOperationType(OperationType.Park.ordinal());
-		lotInfo.setStatus(LotStatusType.Reservation.ordinal());
-		lotInfo.setParkingStartTime(-1);
+		lotInfo.setLotId(3);
 		
-		userInfo.setIdentityId("12312312312");
-		userInfo.setDisplayName("李一凡");
+		userInfo.setIdentityId("123123");
+		userInfo.setDisplayName("asdasasd");
+		userInfo.setPhoneNumber("123123123");
 		operation.setUserInfo(userInfo);
 		operation.setLotInfo(lotInfo);
-		
 		OperationDataManager.getInstance().handleOneOperation(mResponse, operation);
 	}
 }

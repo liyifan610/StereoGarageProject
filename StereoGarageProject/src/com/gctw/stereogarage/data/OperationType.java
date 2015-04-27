@@ -3,9 +3,9 @@ package com.gctw.stereogarage.data;
 public enum OperationType {
 
 	Reserve,
-	Contract,
 	Park,
-	Leave;
+	Leave,
+	Contract;
 	
 	public static OperationType intToEnum(int index){
 		OperationType type;

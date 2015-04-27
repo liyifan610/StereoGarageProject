@@ -1,14 +1,16 @@
 package com.gctw.stereogarage.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
+
+import com.gctw.stereogarage.data.GlobalConsts;
+import com.gctw.stereogarage.data.LotStatusType;
+import com.gctw.stereogarage.data.OperationType;
 import com.gctw.stereogarage.data.ServerStatusCode;
 import com.gctw.stereogarage.data.SqlProtocol;
 import com.gctw.stereogarage.entity.LotEntity;
+import com.gctw.stereogarage.entity.OperationEntity;
 import com.gctw.stereogarage.entity.UserEntity;
 import com.gctw.stereogarage.helper.database.SqlResponseInfo;
 import com.google.gson.Gson;
@@ -33,13 +35,15 @@ public class GCTWUtil {
 		return new java.util.Date(time);
 	}
 	
-	public static String getRequsetJsonString(HttpServletRequest request) throws IOException{
-		InputStream stream = request.getInputStream();
-		int length = request.getContentLength();
-		byte[] buffer = new byte[length];
-		stream.read(buffer, 0, length);
-		String jsonString = new String(buffer, "utf-8");
-		return jsonString;
+	public static boolean intToContracted(int isContracted){
+		switch(isContracted){
+			case 0:
+				return false;
+			case 1:
+				return true;
+			default:
+				return false;
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -51,6 +55,10 @@ public class GCTWUtil {
 				jsonArray.add(userToJsonObject(userEntity));
 			}
 			break;
+		case SqlProtocol.QUERY_ONE_USER:
+			UserEntity userInfo = (UserEntity)info.responseObject;
+			jsonArray.add(userToJsonObject(userInfo));
+			break;
 		case SqlProtocol.QUERY_STOREY_LOT:
 		case SqlProtocol.SELECT_ALL_LOT:
 			List<LotEntity> lotList = (List<LotEntity>)info.responseObject;
@@ -60,6 +68,7 @@ public class GCTWUtil {
 			break;
 		case SqlProtocol.INSERT_ONE_USER:
 		case SqlProtocol.UPDATE_ONE_USER:
+		case SqlProtocol.HANDLE_ONE_OPERATION:
 			break;
 		}
 	}
@@ -67,16 +76,9 @@ public class GCTWUtil {
 	public static String getResponseJsonText(SqlResponseInfo responseInfo){
 		JsonObject responseJson = new JsonObject();
 		JsonArray jsonArray = new JsonArray();
-		responseJson.addProperty("status", ServerStatusCode.SUCCESS_STATUS);
-		switch(responseInfo.responseProtocol){
-		case SqlProtocol.SELECT_ALL_USER:
-		case SqlProtocol.INSERT_ONE_USER:
-		case SqlProtocol.QUERY_STOREY_LOT:
-		case SqlProtocol.SELECT_ALL_LOT:
+		responseJson.addProperty("status", responseInfo.responseStatus);
+		if(responseInfo.responseStatus == ServerStatusCode.SUCCESS_STATUS){
 			ToJsonContent(responseInfo, jsonArray);
-			break;
-		case SqlProtocol.HANDLE_ONE_OPERATION:
-			break;
 		}
 		responseJson.add("content", jsonArray);
 		return responseJson.toString();
@@ -92,6 +94,7 @@ public class GCTWUtil {
 		json.addProperty("userId", user.getUserId());
 		json.addProperty("displayName", user.getDisplayName());
 		json.addProperty("gender", user.getGender());
+		json.addProperty("company", user.getCompany());
 		json.addProperty("identityId", user.getIdentityId());
 		json.addProperty("phoneNumber", user.getPhoneNumber());
 		Date date = user.getBirth();
@@ -104,26 +107,20 @@ public class GCTWUtil {
 		return json;
 	}
 	
-	public static UserEntity parseSingleUserJson(String userJsonString) throws NullPointerException{
+	public static UserEntity parseUserJson(JsonObject userJson) throws NullPointerException{
 		UserEntity userInfo = new UserEntity();
-		Gson json = new Gson();
-		JsonObject userJson = json.fromJson(userJsonString, JsonObject.class);
 		
+		//must contain
 		JsonElement displayName = userJson.get("displayName");
-		if(displayName != null){
-			userInfo.setDisplayName(displayName.getAsString());
-		}
+		userInfo.setDisplayName(displayName.getAsString());
 		
-		/**
-		 * request must contain this field
-		 */
+		//must contain
 		JsonElement identityId = userJson.get("identityId");
 		userInfo.setIdentityId(identityId.getAsString());
 		
+		//must contain
 		JsonElement phoneNumber = userJson.get("phoneNumber");
-		if(phoneNumber != null){
-			userInfo.setPhoneNumber(phoneNumber.getAsString());
-		}
+		userInfo.setPhoneNumber(phoneNumber.getAsString());
 		
 		JsonElement company = userJson.get("company");
 		if(company != null){
@@ -132,7 +129,12 @@ public class GCTWUtil {
 		
 		JsonElement gender = userJson.get("gender");
 		if(gender != null){
-			userInfo.setGender(gender.getAsInt());
+			String sex = gender.getAsString();
+			if(sex.equals("male")){
+				userInfo.setGender(GlobalConsts.MALE);
+			}else{
+				userInfo.setGender(GlobalConsts.FEMALE);
+			}
 		}
 		
 		JsonElement birth = userJson.get("birth");
@@ -149,10 +151,24 @@ public class GCTWUtil {
 		json.addProperty("lotId", lot.getLotId());
 		json.addProperty("storey", lot.getStorey());
 		json.addProperty("status", lot.getStatus());
+		switch(LotStatusType.intToEnum(lot.getStatus())){
+		case Empty:
+			break;
+		case Reservation:
+			json.addProperty("currentUserId", lot.getCurrentUserId());
+			json.addProperty("reservationTime", lot.getReservationTime());
+			break;
+		case Using:
+			json.addProperty("currentUserId", lot.getCurrentUserId());
+			json.addProperty("parkingStartTime", lot.getParkingStartTime());
+			json.addProperty("parkingEndTime", lot.getParkingEndTime());
+			break;
+		}
 		json.addProperty("lastOperationType", lot.getLastOperationType());
-		json.addProperty("isContracted", lot.isContracted());
-		json.addProperty("currentUserId", lot.getCurrentUserId());
-		json.addProperty("parkingStartTime", lot.getParkingStartTime());
+		json.addProperty("isContracted", lot.getIsContracted());
+		if(intToContracted(lot.getIsContracted())){
+			json.addProperty("contractUserId", lot.getContractUserId());
+		}
 		UserEntity userInfo = lot.getUserInfo();
 		if(userInfo != null){
 			JsonElement userJson = userToJsonObject(userInfo);
@@ -161,6 +177,13 @@ public class GCTWUtil {
 			json.add("userInfo", null);
 		}
 		return json;
+	}
+	
+	public static UserEntity parseUserRequest(String userJsonString) throws NullPointerException{
+		Gson json = new Gson();
+		JsonObject userJson = json.fromJson(userJsonString, JsonObject.class);
+		UserEntity userInfo = GCTWUtil.parseUserJson(userJson);
+		return userInfo;
 	}
 	
 	public static int parseStoreyRequest(String jsonString) throws NullPointerException{
@@ -172,5 +195,55 @@ public class GCTWUtil {
 		}else{
 			return -1;
 		}
+	}
+	
+	public static OperationEntity parseOperationRequest(String jsonText) throws NullPointerException{
+		OperationEntity operation = new OperationEntity();
+		UserEntity userInfo = new UserEntity();
+		LotEntity lotInfo = new LotEntity();
+		Gson json = new Gson();
+		JsonObject requestJson = json.fromJson(jsonText, JsonObject.class);
+		int lotId = requestJson.get("lotId").getAsInt();
+		if(lotId<=GlobalConsts.TOTALLOTS && lotId>0){
+			lotInfo.setLotId(lotId);
+		}else{
+			throw new NullPointerException();
+		}
+		
+		int operationType = requestJson.get("operationType").getAsInt();
+		lotInfo.setLastOperationType(operationType);
+		
+		switch(OperationType.intToEnum(operationType)){
+		case Reserve:
+			lotInfo.setStatus(LotStatusType.Reservation.ordinal());
+			lotInfo.setReservationTime(requestJson.get("reservationTime").getAsDouble());
+			lotInfo.setParkingStartTime(0);
+			lotInfo.setParkingEndTime(0);
+			break;
+		case Park:
+			lotInfo.setStatus(LotStatusType.Using.ordinal());
+			lotInfo.setReservationTime(0);
+			lotInfo.setParkingEndTime(requestJson.get("parkingEndTime").getAsDouble());
+			break;
+		case Leave:
+			lotInfo.setStatus(LotStatusType.Empty.ordinal());
+			lotInfo.setReservationTime(0);
+			lotInfo.setParkingStartTime(0);
+			lotInfo.setParkingEndTime(0);
+			break;
+		case Contract:
+			lotInfo.setStatus(LotStatusType.Empty.ordinal());
+			lotInfo.setIsContracted(1);
+			lotInfo.setReservationTime(0);
+			lotInfo.setParkingStartTime(0);
+			lotInfo.setParkingEndTime(0);
+			break;
+		}
+		JsonObject userJson = requestJson.get("userInfo").getAsJsonObject();
+		userInfo = parseUserJson(userJson);
+		
+		operation.setUserInfo(userInfo);
+		operation.setLotInfo(lotInfo);
+		return operation;
 	}
 }

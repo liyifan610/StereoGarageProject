@@ -1,6 +1,7 @@
 package com.gctw.stereogarage.base;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
@@ -76,6 +77,21 @@ public class BaseServlet extends HttpServlet {
 		mResponse = response;
 		mResponse.setCharacterEncoding("UTF-8");
 		mWriter = response.getWriter();
+		mResponse.setHeader("Access-Control-Allow-Origin", "*");
+	}
+	/**
+	 * get the request json string
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	protected String getRequsetJsonString(HttpServletRequest request) throws IOException{
+		InputStream stream = request.getInputStream();
+		int length = request.getContentLength();
+		byte[] buffer = new byte[length];
+		stream.read(buffer, 0, length);
+		String jsonString = new String(buffer, "utf-8");
+		return jsonString;
 	}
 	
 	private void setResponseInfo(ServletResponseInfo info){

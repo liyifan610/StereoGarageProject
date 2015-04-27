@@ -1,0 +1,202 @@
+body{
+	background-color: #fff000;
+}
+
+input{
+	width: 80%;
+}
+
+#rightView{
+	width: 67%;
+	float: right;
+}
+
+#leftView{
+	width: 30%;
+	float: left;
+}
+
+.divider{
+	height: 2px;
+	width: 100%;
+	background-color: blue;
+}
+
+.row{
+	margin-bottom: 20px;
+}
+
+.row .row{
+	margin-bottom: 0px;
+	margin-top: 10px;
+}
+
+.header{
+	width: 100%;
+	margin-bottom: 20px;
+	position: relative;
+}
+
+.header .page-header{
+	height: 100px;
+}
+
+.header .logo{
+	position: absolute;
+	right: 70px;
+	top: 0px;
+	width: 200px;
+	height: 100px;
+}
+
+.header .logo img{
+	width: 200px;
+	height: 100px;
+}
+
+
+.controller{
+	float: left;
+	margin-top: 20px;
+	width: 30%;
+	height: 600px;
+	padding: 10px;
+	border: 1px solid black;
+	background-color: #ebebeb;
+	position: fixed;
+}
+
+
+.controller .lotInfo{
+	padding-top: 30px;
+	width: 100%;
+	height: 30%;
+	text-align: left;
+}
+
+.controller .menu{
+	text-align: right;
+	padding-bottom: 10px;
+}
+
+.controller .menu .dropdown-menu{
+	right: 0px;
+	left: 150px;
+}
+
+.controller .lotInfo .lotId-title, .controller .lotInfo .lotStorey-title,
+.controller .lotInfo .lotStatus-title, .controller .lotInfo .startTime-title,
+.controller .lotInfo .endTime-title, .controller .lotInfo .reserveTime-title,
+.controller .lotInfo .isContracted-title{
+	margin-left: 20px;
+	width: 40%;
+	font-size: 14px;
+	display: block;
+	float: left;
+}
+
+.controller .lotInfo .lotId-text, .controller .lotInfo .lotStorey-text,
+.controller .lotInfo .lotStatus-text, .controller .lotInfo .startTime-text,
+.controller .lotInfo .endTime-text, .controller .lotInfo .reserveTime-text,
+.controller .lotInfo .isContracted-text{
+	width: 50%;
+	display: block;
+	float: left;
+}
+
+.controller .userInfo{
+	padding-top: 30px;
+	width: 100%;
+	height: 25%;
+	text-align: left;
+}
+
+.controller .userInfo .displayName-title, .controller .userInfo .identityId-title, .controller .userInfo .company-title{
+	margin-left: 20px;
+	width: 40%;
+	font-size: 14px;
+	display: block;
+	float: left;
+}
+
+.controller .userInfo .displayName-text, .controller .userInfo .identityId-text, .controller .userInfo .company-text{
+	width: 40%;
+	display: block;
+	float: left;
+}
+
+.controller .buttons{
+	text-align: center;
+	width: 100%;
+	height: 37%;
+	background-color: white;
+}
+
+.controller .buttons .btn{
+	margin-top: 15px;
+	width: 50%
+}
+
+#right .viewHolder{
+	float: left;
+	width: 70%;
+	margin-top: 30px;
+}
+
+.nav-tabs{
+	padding-left: 10px;
+	padding-right: 5px;
+}
+
+.viewHolder .viewHolderWrapper{
+	margin-top: 5px;
+	width: 800px;
+	height: 800px;
+	position: relative;
+	overflow: hidden;
+}
+
+.tab-content{
+	width: 4800px;
+	position: absolute;
+	left: 0px;
+	top:0px;
+}
+
+.lotView{
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-bottom: 10px;
+	float: left;
+	width: 800px;
+	height: 750px;
+}
+
+.lotView [class*="col-"]{
+	height: 150px;
+	background-color: #eee;
+	background-color: #e6e6e6;
+	border: 1px solid #dddddd;
+	border: 1px solid rgba(86,61,124,2);
+	cursor: pointer;
+}
+
+.lotView .col-md-3 .container span{
+	margin-top: 10px;
+	width: 130px;
+	display: block;
+	text-align: center;
+}
+
+.lotView .col-md-3 .container img{
+	margin-top: 24px;
+	width: 130px;
+	height: 100px;
+}
+
+.form-group span{
+	margin-top: 8px;
+	display: block;
+	float: left;
+	color: red;
+}

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.gctw.stereogarage.data.GlobalConsts;
 import com.gctw.stereogarage.data.HttpStatusCode;
+import com.gctw.stereogarage.data.OperationType;
 import com.gctw.stereogarage.data.SqlProtocol;
 import com.gctw.stereogarage.entity.OperationEntity;
 import com.gctw.stereogarage.helper.database.OperationDbHelper;
@@ -44,7 +45,7 @@ public class OperationDataManager {
 			}
 			
 			@Override
-			public void onFalied(SqlResponseInfo responseInfo) {
+			public void onFailed(SqlResponseInfo responseInfo) {
 				// TODO Auto-generated method stub
 				ServletResponseInfo info = new ServletResponseInfo();
 				ServletResponse servletResponse = mServletResponseMap.get(responseInfo.taskId);
@@ -68,6 +69,17 @@ public class OperationDataManager {
 		processInfo.processProtocol = SqlProtocol.HANDLE_ONE_OPERATION;
 		processInfo.sqlObject = operation;
 		mServletResponseMap.put(processInfo.taskId, servletResponse);
-		mOperationDbHelper.handleOneOperation(processInfo, mOperationDataResponse);
+		switch(OperationType.intToEnum(operation.getOperationType())){
+		case Park:
+		case Reserve:
+			mOperationDbHelper.handleOneOperation(processInfo, mOperationDataResponse);
+			break;
+		case Leave:
+			mOperationDbHelper.handleLeave(processInfo, mOperationDataResponse);
+			break;
+		case Contract:
+			mOperationDbHelper.handleContract(processInfo, mOperationDataResponse);
+			break;
+		}
 	}
 }

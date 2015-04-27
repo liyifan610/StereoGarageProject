@@ -14,6 +14,18 @@ public class UserDbHelper extends DatabaseHelper {
 		mUserImp = new UserImp();
 	}
 	
+	public void queryOneUserFromDb(DataManagerResponse response, SqlProcessInfo processInfo){
+		int userId = (int)processInfo.sqlObject;
+		try{
+			UserEntity userInfo = mUserImp.queryUserEntityByUserId(userId);
+			processInfo.hasError = false;
+			replyMsgToDataManager(response, processInfo, userInfo);
+		}catch(Exception ex){
+			processInfo.hasError = true;
+			replyMsgToDataManager(response, processInfo, null);
+		}
+	}
+	
 	public void selectAllUserFromDb(DataManagerResponse response, SqlProcessInfo processInfo){
 		List<UserEntity> userList = mUserImp.selectAllUserEntities();
 		replyMsgToDataManager(response, processInfo, userList);

@@ -1,5 +1,6 @@
 package com.gctw.stereogarage.helper.database;
 
+import com.gctw.stereogarage.data.ServerStatusCode;
 import com.gctw.stereogarage.responser.DataManagerResponse;
 
 public abstract class DatabaseHelper {
@@ -15,6 +16,12 @@ public abstract class DatabaseHelper {
 		responseInfo.taskId = processInfo.taskId;
 		responseInfo.responseProtocol = processInfo.processProtocol;
 		responseInfo.responseObject = responseObject;
-		response.onSuccess(responseInfo);
+		if(!processInfo.hasError){
+			responseInfo.responseStatus = ServerStatusCode.SUCCESS_STATUS;
+			response.onSuccess(responseInfo);
+		}else{
+			responseInfo.responseStatus = ServerStatusCode.FAILED_STATUS;
+			response.onFailed(responseInfo);
+		}
 	}
 }

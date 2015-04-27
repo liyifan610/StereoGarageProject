@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 public class OperationEntity implements Serializable{
 
-	//key 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
+	//key
 	private int OperationId;
 	private double CreateTimestamp = -1;
 	private int lotId;

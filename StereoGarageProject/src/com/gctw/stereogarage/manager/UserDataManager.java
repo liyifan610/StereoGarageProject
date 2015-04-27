@@ -42,9 +42,12 @@ public class UserDataManager {
 			}
 			
 			@Override
-			public void onFalied(SqlResponseInfo responseInfo) {
+			public void onFailed(SqlResponseInfo responseInfo) {
 				// TODO Auto-generated method stub
 				ServletResponseInfo info = new ServletResponseInfo();
+				info.httpStatusCode = HttpStatusCode.OK;
+				info.contentType = GlobalConsts.CONTENT_TYPE_TEXT;
+				info.responseContent = GCTWUtil.getResponseJsonText(responseInfo);
 				ServletResponse servletResponse = mServletResponseMap.get(responseInfo.taskId);
 				servletResponse.onFailed(info);
 			}
@@ -58,6 +61,15 @@ public class UserDataManager {
 		}else{
 			return mUserDataManager;
 		}
+	}
+	
+	public void getOneUser(ServletResponse servletResponse, UserEntity userInfo){
+		SqlProcessInfo processInfo = new SqlProcessInfo();
+		processInfo.taskId = UUID.randomUUID().toString();
+		processInfo.processProtocol = SqlProtocol.QUERY_ONE_USER;
+		processInfo.sqlObject = userInfo.getUserId();
+		mServletResponseMap.put(processInfo.taskId, servletResponse);
+		mUserDbHepler.queryOneUserFromDb(mUserDataResponse, processInfo);
 	}
 	
 	public void getAllUser(ServletResponse servletResponse){

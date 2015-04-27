@@ -16,4 +16,9 @@ public class SqlResponseInfo {
 	 * response object for data manager to handle for servlet
 	 */
 	public Object responseObject;
+	
+	/**
+	 * response status to client
+	 */
+	public int responseStatus;
 }

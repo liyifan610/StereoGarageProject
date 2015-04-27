@@ -42,7 +42,8 @@ public class UserImp implements UserMapper{
 	@Override
 	public UserEntity queryUserEntityByUserId(int userId) {
 		// TODO Auto-generated method stub
-		return null;
+		UserEntity userInfo = mUserMapper.queryUserEntityByUserId(userId);
+		return userInfo;
 	}
 
 	@Override

@@ -5,12 +5,7 @@
 <mapper namespace="com.gctw.stereogarage.mapper.database.LotMapper">
   	<!--
   		DB Column:
-  			LotId,
-  			Storey,
-  			Status,
-  			IsContracted,
-  			CurrentUserId,
-  			ParkingStartTime
+  			
   	  -->
   	<resultMap type="LotEntity" id="LotEntityRs">
   		<id column="LotId" property="lotId"/>
@@ -18,8 +13,11 @@
   		<result column="Status" property="status"/>
   		<result column="LastOperationType" property="lastOperationType"/>
   		<result column="IsContracted" property="isContracted"/>
+  		<result column="ReservationTime" property="reservationTime"/>
   		<result column="ParkingStartTime" property="parkingStartTime"/>
+  		<result column="ParkingEndTime" property="parkingEndTime"/>
   		<result column="CurrentUserId" property="currentUserId"/>
+  		<result column="ContractUserId" property="contractUserId"/>
   		<association property="userInfo" javaType="UserEntity" resultMap="UserEntityRs"/>
   	</resultMap>
   	
@@ -48,8 +46,11 @@
 		l.status Status,
 		l.lastOperationType LastOperation,
 		l.isContracted IsContracted,
+		l.reservationTime ReservationTime,
 		l.parkingStartTime ParkingStartTime,
+		l.parkingEndTime ParkingEndTime,
 		l.currentUserId CurrentUserId,
+		l.contractUserId ContractUserId,
 		u.userId UserId,
 		u.displayName DisplayName,
 		u.identityId IdentityId,
@@ -59,33 +60,44 @@
 		u.birth Birth
 		from lot l
 		left outer join user u
-		on l.CurrentUserId = u.UserId
+		on l.CurrentUserId = u.UserId or l.ContractUserId = u.UserId
         where Storey = #{storey};
     </select>
     
-    <select id="queryLotEntityByLotId" parameterType="int" resultType="LotEntity">  
-        <include refid="selectListLot"/> where LotId = #{lotId};
+    <select id="queryLotEntityByLotId" parameterType="int" resultMap="LotEntityRs">  
+        select
+		l.lotId LotId,
+		l.storey Storey,
+		l.status Status,
+		l.lastOperationType LastOperation,
+		l.isContracted IsContracted,
+		l.reservationTime ReservationTime,
+		l.parkingStartTime ParkingStartTime,
+		l.parkingEndTime ParkingEndTime,
+		l.currentUserId CurrentUserId,
+		l.contractUserId ContractUserId,
+		u.userId UserId,
+		u.displayName DisplayName,
+		u.identityId IdentityId,
+		u.phoneNumber PhoneNumber,
+		u.company Company,
+		u.gender Gender,
+		u.birth Birth
+		from lot l
+		left outer join user u
+		on l.CurrentUserId = u.UserId or l.ContractUserId = u.UserId
+		where LotId = #{lotId};
     </select> 
     
     <insert id="insertLotEntity" parameterType="LotEntity">
     	insert into lot
-    	(Storey,
-    	 IsEmpty,
-    	 Status,
-    	 LastOperationType,
-    	 IsContracted,
-    	 CurrentUserId,
-    	 StartTimeStamp) 
-    	values 
-    	<set>
-    	 	<if test="storey != -1">#{storey},</if>
-    	 	<if test="isEmpty != null">#{isEmpty},</if>
-    	 	<if test="status != -1">#{status},</if>
-    	 	<if test="lastOperationType != -1"> #{lastOperationType},</if>
-    	 	<if test="isContracted != -1"> #{isContracted},</if>
-    	 	<if test="currentUserId != -1"> #{currentUserId},</if>
-    	 	<if test="startTimeStamp != -1"> #{startTimeStamp}</if>
-    	 </set>);
+    	(
+    	  Storey
+    	) 
+    	values
+    	(
+    	  storey
+    	); 
     </insert>
     
     <insert id="insertLotEntitiesBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="lotId">
@@ -107,7 +119,10 @@
     	    <if test="lastOperationType != -1">LastOperationType = #{lastOperationType},</if>	
     	    <if test="isContracted != -1">IsContracted = #{isContracted},</if>
     	    <if test="currentUserId != -1">CurrentUserId = #{currentUserId},</if>
+    	    <if test="contractUserId != -1">ContractUserId = #{contractUserId},</if>
+    	    <if test="reservationTime != -1">ReservationTime = #{reservationTime},</if>
     	    <if test="parkingStartTime != -1">ParkingStartTime = #{parkingStartTime},</if>
+    	    <if test="parkingEndTime != -1">ParkingEndTime = #{parkingEndTime},</if>
     	  </set>
     	  where LotId=#{lotId}
     </update>

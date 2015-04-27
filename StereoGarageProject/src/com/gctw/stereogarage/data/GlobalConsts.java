@@ -11,6 +11,8 @@ public class GlobalConsts {
 	public static String SQL_DEAULT_STRING = "";
 	public static double SQL_DEFAULT_DOUBLE = -1.0;
 	
+	public static int TOTALLOTS = 120;
+	
 	/**
 	 * gender
 	 */

@@ -1,5 +1,6 @@
 package com.gctw.stereogarage.helper.database;
 
+import com.gctw.stereogarage.data.LotStatusType;
 import com.gctw.stereogarage.data.OperationType;
 import com.gctw.stereogarage.data.ServerStatusCode;
 import com.gctw.stereogarage.entity.LotEntity;
@@ -23,6 +24,11 @@ public class OperationDbHelper extends DatabaseHelper {
 		mOperationImp = new OperationImp();
 	}
 	
+	/**
+	 * 
+	 * @param processInfo
+	 * @param response
+	 */
 	public void handleOneOperation(SqlProcessInfo processInfo, DataManagerResponse response){
 		OperationEntity operation = (OperationEntity)processInfo.sqlObject;
 		UserEntity userInfo = operation.getUserInfo();
@@ -33,19 +39,15 @@ public class OperationDbHelper extends DatabaseHelper {
 		}else{
 			mUserImp.insertUserEntity(userInfo);
 		}
-		lotInfo.setCurrentUserId(userInfo.getUserId());
 		switch(OperationType.intToEnum(lotInfo.getLastOperationType())){
 		case Reserve:
-			lotInfo.setParkingStartTime(0);
+			lotInfo.setCurrentUserId(userInfo.getUserId());
 			break;
 		case Park:
+			lotInfo.setCurrentUserId(userInfo.getUserId());
 			lotInfo.setParkingStartTime(GCTWUtil.getCurrentTimeStamp());
 			break;
-		case Leave:
-			lotInfo.setParkingStartTime(0);
-			break;
-		case Contract:
-			lotInfo.setParkingStartTime(0);
+		default:
 			break;
 		}
 		
@@ -59,5 +61,49 @@ public class OperationDbHelper extends DatabaseHelper {
 		}else{
 			replyMsgToDataManager(response, processInfo, ServerStatusCode.FAILED_STATUS);
 		}
+	}
+	
+	/**
+	 * 
+	 * @param processInfo
+	 * @param response
+	 */
+	public void handleLeave(SqlProcessInfo processInfo, DataManagerResponse response){
+		OperationEntity operation = (OperationEntity)processInfo.sqlObject;
+		UserEntity userInfo = operation.getUserInfo();
+		LotEntity lotInfo = operation.getLotInfo();
+		lotInfo = mLotImp.queryLotEntityByLotId(lotInfo.getLotId());
+		String displayName = lotInfo.getUserInfo().getDisplayName();
+		String identityId = lotInfo.getUserInfo().getIdentityId();
+		String phoneNumber = lotInfo.getUserInfo().getPhoneNumber();
+		Boolean check = true;
+		
+		if(!userInfo.getDisplayName().equals(displayName)){
+			check = false;
+		}
+		
+		if(!userInfo.getPhoneNumber().equals(phoneNumber)){
+			check = false;
+		}
+		
+		if(!userInfo.getIdentityId().equals(identityId)){
+			check = false;
+		}
+		
+		if(check){
+			lotInfo.setStatus(LotStatusType.Empty.ordinal());
+			lotInfo.setCurrentUserId(0);
+			lotInfo.setLastOperationType(OperationType.Leave.ordinal());
+			lotInfo.setParkingStartTime(0);
+			lotInfo.setParkingEndTime(0);
+			mLotImp.updateLotEntity(lotInfo);
+			replyMsgToDataManager(response, processInfo, ServerStatusCode.SUCCESS_STATUS);
+		}else{
+			replyMsgToDataManager(response, processInfo, ServerStatusCode.FAILED_STATUS);
+		}
+	}
+	
+	public void handleContract(SqlProcessInfo processInfo, DataManagerResponse response){
+		
 	}
 }

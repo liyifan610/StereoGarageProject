@@ -21,7 +21,13 @@ public class LotDbHelper extends DatabaseHelper{
 	
 	public void queryLotsByStorey(DataManagerResponse response, SqlProcessInfo processInfo){
 		int storey = (int)processInfo.sqlObject;
-		List<LotEntity> lotList = mLotImp.queryLotEntitiesByStorey(storey);
-		replyMsgToDataManager(response, processInfo, lotList);
+		try{
+			List<LotEntity> lotList = mLotImp.queryLotEntitiesByStorey(storey);
+			processInfo.hasError = false;
+			replyMsgToDataManager(response, processInfo, lotList);
+		}catch(Exception ex){
+			processInfo.hasError = true;
+			replyMsgToDataManager(response, processInfo, null);
+		}
 	}
 }

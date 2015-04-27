@@ -42,7 +42,7 @@ public class LotDataManager {
 			}
 			
 			@Override
-			public void onFalied(SqlResponseInfo responseInfo) {
+			public void onFailed(SqlResponseInfo responseInfo) {
 				// TODO Auto-generated method stub
 				ServletResponseInfo info = new ServletResponseInfo();
 				ServletResponse servletResponse = mServletResponseMap.get(responseInfo.taskId);

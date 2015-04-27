@@ -16,4 +16,9 @@ public class SqlProcessInfo {
      * Object for database to process
      */
     public Object sqlObject;
+    
+    /**
+     * process error happened
+     */
+    public boolean hasError = false;
 }
